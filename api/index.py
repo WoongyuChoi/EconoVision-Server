@@ -8,5 +8,9 @@ def home():
     return jsonify(message="Hello, Vercel!")
 
 
-def handler(request, context=None):
-    return app(request.environ, start_response=lambda *args: None)
+def handler(event, context):
+    from werkzeug.wrappers import Request, Response
+
+    request = Request(event)
+    response = Response.from_app(app, request.environ)
+    return response(environ=None, start_response=None)

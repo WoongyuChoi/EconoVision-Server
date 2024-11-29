@@ -21,7 +21,3 @@ def handler(event, context):
     request = Request(event)
     response = Response.from_app(dispatcher, request.environ)
     return response(environ=None, start_response=lambda *args: None)
-
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)

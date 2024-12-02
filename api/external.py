@@ -49,10 +49,10 @@ def fetch_exchange_rate(start_date=None, end_date=None, item_code="0000001"):
     language = "kr"
     start_count = 1
     end_count = 10000
-    stat_code = "731Y001"
+    table_code = "731Y001"
     period = "D"
 
-    url = f"{base_url}/{service_name}/{api_key}/{response_format}/{language}/{start_count}/{end_count}/{stat_code}/{period}/{start_date}/{end_date}/{item_code}"
+    url = f"{base_url}/{service_name}/{api_key}/{response_format}/{language}/{start_count}/{end_count}/{table_code}/{period}/{start_date}/{end_date}/{item_code}"
     # logger.debug(f"Url: {url}")
 
     try:

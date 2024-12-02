@@ -1,5 +1,6 @@
 import time
 from flask import Flask, jsonify
+from api.external import check_ecos
 from api.logger import get_logger
 
 app = Flask(__name__)
@@ -7,8 +8,13 @@ logger = get_logger(__name__)
 
 
 @app.route("/")
-def home():
-    return jsonify(message="Hello, Vercel!")
+def health_check():
+    status = {
+        "status": "UP",
+        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "details": {"ecos_api": "UP" if check_ecos() else "DOWN"},
+    }
+    return jsonify(status), 200
 
 
 @app.route("/favicon.ico")

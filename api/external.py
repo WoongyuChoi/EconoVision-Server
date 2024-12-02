@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 from handler.logger import get_logger
 from util.date_utils import get_first_day_of_last_month, get_last_day_of_last_month
 
-logger = get_logger(__name__)
-
 if os.getenv("VERCEL_ENV") is None:
     load_dotenv()
 
@@ -16,7 +14,8 @@ def check_ecos():
     url = "https://ecos.bok.or.kr/api/"
 
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=10)
+        logger = get_logger(__name__)
         logger.info(f"Response: {response.status_code} {dict(response.headers)} ")
         return response.status_code == 200
     except requests.RequestException:
@@ -48,7 +47,6 @@ def fetch_exchange_rate(start_date=None, end_date=None, item_code="0000001"):
     period = "D"
 
     url = f"{base_url}/{service_name}/{api_key}/{response_format}/{language}/{start_count}/{end_count}/{table_code}/{period}/{start_date}/{end_date}/{item_code}"
-    # logger.debug(f"Url: {url}")
 
     try:
         response = requests.get(url, timeout=10)

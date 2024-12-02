@@ -1,10 +1,10 @@
 import os
 
-import requests
 from dotenv import load_dotenv
 
 from handler.logger import get_logger
 from util.date_utils import get_first_day_of_last_month, get_last_day_of_last_month
+from util.fetch_utils import fetch_data
 
 logger = get_logger(__name__)
 
@@ -16,10 +16,11 @@ def check_ecos():
     url = "https://ecos.bok.or.kr/api/"
 
     try:
-        response = requests.get(url, timeout=10)
+        response = fetch_data(url, return_json=False)
         logger.info(f"Response: {response.status_code} {dict(response.headers)} ")
         return response.status_code == 200
-    except requests.RequestException:
+    except ValueError as e:
+        logger.warning(f"ECOS API health check failed: {e}")
         return False
 
 
@@ -48,10 +49,4 @@ def fetch_exchange_rate(start_date=None, end_date=None, item_code="0000001"):
     period = "D"
 
     url = f"{base_url}/{service_name}/{api_key}/{response_format}/{language}/{start_count}/{end_count}/{table_code}/{period}/{start_date}/{end_date}/{item_code}"
-
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        return response.json()
-    except requests.RequestException as e:
-        raise ValueError(f"Failed to fetch data from ECOS API: {e}")
+    return fetch_data(url)

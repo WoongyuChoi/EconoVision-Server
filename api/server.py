@@ -6,11 +6,11 @@ from api.external import check_ecos, fetch_exchange_rate
 from handler.logger import get_logger
 
 app = Flask(__name__)
+logger = get_logger(__name__)
 
 
 @app.route("/")
 def health_check():
-    logger = get_logger(__name__)
     logger.info("Health check called.")
     status = {
         "status": "UP",
@@ -22,7 +22,6 @@ def health_check():
 
 @app.route("/favicon.<ext>")
 def favicon(ext):
-    logger = get_logger(__name__)
     logger.debug(f"Favicon request received with extension: {ext}")
     return "", 204, {"Content-Type": "image/x-icon"}
 
@@ -33,7 +32,6 @@ def get_exchange_rate():
     end_date = request.args.get("end_date")
     item_code = request.args.get("item_code", "0000001")
 
-    logger = get_logger(__name__)
     logger.debug(
         f"Parameters received: start_date={start_date}, end_date={end_date}, item_code={item_code}"
     )

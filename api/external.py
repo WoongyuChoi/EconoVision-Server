@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from handler.logger import get_logger
 from util.date_utils import get_first_day_of_last_month, get_last_day_of_last_month
 
+logger = get_logger(__name__)
+
 if os.getenv("VERCEL_ENV") is None:
     load_dotenv()
 
@@ -15,7 +17,6 @@ def check_ecos():
 
     try:
         response = requests.get(url, timeout=10)
-        logger = get_logger(__name__)
         logger.info(f"Response: {response.status_code} {dict(response.headers)} ")
         return response.status_code == 200
     except requests.RequestException:

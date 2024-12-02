@@ -19,8 +19,8 @@ def health_check():
     return jsonify(status), 200
 
 
-@app.route("/favicon.ico")
-def favicon():
+@app.route("/favicon.<ext>")
+def favicon(ext):
     return "", 204, {"Content-Type": "image/x-icon"}
 
 

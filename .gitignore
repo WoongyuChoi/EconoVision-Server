@@ -1,0 +1,67 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment files
+.env
+.venv/
+venv/
+env/
+ENV/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+*.manifest
+*.spec
+
+# Logs and databases
+*.log
+*.sqlite3
+*.sqlite3-journal
+instance/
+
+# Coverage reports
+.coverage
+*.cover
+htmlcov/
+.cache
+.pytest_cache/
+.coverage.*
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# mypy, pytype, and type-checking tools
+.mypy_cache/
+.pytype/
+
+# Flask specific
+.webassets-cache
+
+# Sphinx documentation
+docs/_build/
+
+# PyCharm
+.idea/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Python dependency management
+.pdm.toml
+.pdm-python
+.pdm-build/
+__pypackages__/

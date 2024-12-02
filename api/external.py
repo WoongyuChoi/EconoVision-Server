@@ -1,11 +1,10 @@
-import calendar
 import os
-from datetime import datetime, timedelta
 
 import requests
 from dotenv import load_dotenv
 
 from handler.logger import get_logger
+from util.date_utils import get_first_day_of_last_month, get_last_day_of_last_month
 
 logger = get_logger(__name__)
 
@@ -33,14 +32,10 @@ def fetch_exchange_rate(start_date=None, end_date=None, item_code="0000001"):
     :return: API 응답 데이터 (JSON)
     """
 
-    today = datetime.today()
-    last_day_of_last_month = today.replace(day=1) - timedelta(days=1)
-    first_day_of_last_month = last_day_of_last_month.replace(day=1)
-
     if not start_date:
-        start_date = first_day_of_last_month.strftime("%Y%m%d")
+        start_date = get_first_day_of_last_month()
     if not end_date:
-        end_date = last_day_of_last_month.strftime("%Y%m%d")
+        end_date = get_last_day_of_last_month()
 
     base_url = "https://ecos.bok.or.kr/api"
     service_name = "StatisticSearch"

@@ -1,11 +1,17 @@
 import time
 
 from flask import Flask, jsonify, request
+from flask_caching import Cache
 
 from api.external import check_ecos, fetch_exchange_rate
+from config import Config
 from handler.logger import get_logger
 
 app = Flask(__name__)
+app.config.from_object(Config)
+
+cache = Cache(app)
+
 logger = get_logger(__name__)
 
 
@@ -27,6 +33,7 @@ def favicon(ext):
 
 
 @app.route("/api/exchange-rate", methods=["GET"])
+@cache.cached(query_string=True)
 def get_exchange_rate():
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")

@@ -49,25 +49,8 @@ def get_exchange_rate():
 def handler(event, context):
     from werkzeug.wrappers import Request, Response
 
-    import logging
-
-    werkzeug_logger = logging.getLogger("werkzeug")
-    werkzeug_logger.disabled = True
-
-    start_time = time.time()
-    logger.debug(f"Request: {event.get('httpMethod')} {event.get('path')}")
-    # logger.debug(f"Headers: {event.get('headers')}")
-    # logger.debug(f"Query Parameters: {event.get('queryStringParameters')}")
-    # logger.debug(f"Body: {event.get('body')}")
-
     request = Request(event)
     response = Response.from_app(app, request.environ)
-
-    duration = time.time() - start_time
-    logger.debug(
-        f"Response: {response.status_code} {dict(response.headers)} "
-        f"{response.get_data(as_text=True)} Duration: {duration:.2f}s"
-    )
 
     return {
         "statusCode": response.status_code,

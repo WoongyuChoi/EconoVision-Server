@@ -3,21 +3,23 @@ import time
 from flask import Flask, jsonify, request
 from flask_caching import Cache
 
-from api.external import check_ecos, fetch_exchange_rate
+from api import check_ecos, fetch_exchange_rate
 from config import Config
+from handler.exception_handler import register_exception_handlers
 from handler.logger import get_logger
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 cache = Cache(app)
-
 logger = get_logger(__name__)
+
+register_exception_handlers(app)
 
 
 @app.route("/")
 def health_check():
-    logger.info("Health check called.")
+    app.logger.info("Health check called.")
     status = {
         "status": "UP",
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -28,7 +30,7 @@ def health_check():
 
 @app.route("/favicon.<ext>")
 def favicon(ext):
-    logger.debug(f"Favicon request received with extension: {ext}")
+    app.logger.debug(f"Favicon request received with extension: {ext}")
     return "", 204, {"Content-Type": "image/x-icon"}
 
 
@@ -37,22 +39,13 @@ def favicon(ext):
 def get_exchange_rate():
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
-    item_code = request.args.get("item_code", "0000001")
+    item_code = request.args.get("item_code")
 
-    logger.debug(
-        f"Parameters received: start_date={start_date}, end_date={end_date}, item_code={item_code}"
+    data = fetch_exchange_rate(
+        start_date=start_date, end_date=end_date, item_code=item_code
     )
-
-    try:
-        data = fetch_exchange_rate(start_date, end_date, item_code)
-        logger.info("Exchange rate data fetched successfully.")
-        return jsonify(data), 200
-    except ValueError as e:
-        logger.error(f"Error fetching exchange rate: {e}")
-        return jsonify({"error": str(e)}), 500
-    except Exception as e:
-        logger.error(f"Unexpected error: {e}")
-        return jsonify({"error": "An unexpected error occurred."}), 500
+    app.logger.info("Exchange rate data fetched successfully.")
+    return jsonify(data), 200
 
 
 def handler(event, context):

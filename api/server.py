@@ -1,12 +1,24 @@
 import time
 
-from flask import jsonify, request
+from flask import Flask, jsonify, request
+from flask_caching import Cache
 
-from api import cache
-from api.external import check_ecos, fetch_exchange_rate
+from api import check_ecos, fetch_exchange_rate
+from config import Config
+from handler.exception_handler import register_exception_handlers
+from handler.logger import get_logger
+
+cache = Cache()
 
 
-def register_routes(app):
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    cache.init_app(app)
+    app.logger = get_logger(__name__)
+
+    register_exception_handlers(app)
 
     @app.route("/")
     def health_check():
@@ -35,3 +47,5 @@ def register_routes(app):
         )
         app.logger.info("Exchange rate data fetched successfully.")
         return jsonify(data), 200
+
+    return app

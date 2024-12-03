@@ -6,12 +6,15 @@ def register_exception_handlers(app):
     @app.errorhandler(ValueError)
     def handle_value_error(e):
         app.logger.error(f"ValueError: {str(e)}")
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": "Invalid input provided."}), 400
 
     @app.errorhandler(HTTPException)
     def handle_http_exception(e):
         app.logger.error(f"HTTPException: {str(e)}")
-        return jsonify({"error": e.description}), e.code
+        return (
+            jsonify({"error": "A server error occurred. Please try again later."}),
+            e.code,
+        )
 
     @app.errorhandler(Exception)
     def handle_generic_exception(e):

@@ -2,8 +2,8 @@ import time
 
 from flask import jsonify, request
 
-from api.external import check_ecos, fetch_exchange_rate
 from api import cache
+from api.external import check_ecos, fetch_exchange_rate
 
 
 def register_routes(app):
@@ -28,8 +28,10 @@ def register_routes(app):
     def get_exchange_rate():
         start_date = request.args.get("start_date")
         end_date = request.args.get("end_date")
-        item_code = request.args.get("item_code", "0000001")
+        item_code = request.args.get("item_code")
 
-        data = fetch_exchange_rate(start_date, end_date, item_code)
+        data = fetch_exchange_rate(
+            start_date=start_date, end_date=end_date, item_code=item_code
+        )
         app.logger.info("Exchange rate data fetched successfully.")
         return jsonify(data), 200

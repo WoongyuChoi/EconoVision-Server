@@ -2,14 +2,10 @@ import os
 
 from dotenv import load_dotenv
 
+from decorators import default_params
 from handler.logger import get_logger
 from models import APIParams
-from utils import (
-    fetch_data,
-    generate_statistic_url,
-    get_first_day_of_last_month,
-    get_last_day_of_last_month,
-)
+from utils import fetch_data, generate_statistic_url
 
 logger = get_logger(__name__)
 
@@ -27,7 +23,8 @@ def check_ecos():
         return False
 
 
-def fetch_exchange_rate(start_date=None, end_date=None, item_code="0000001"):
+@default_params
+def fetch_exchange_rate(start_date, end_date, item_code=None):
     """
     외부 API를 호출하여 주요국 통화의 대원화환율 데이터를 조회합니다.
     :param start_date: 검색 시작일자 (YYYYMMDD), 기본값은 지난달의 첫날
@@ -36,20 +33,13 @@ def fetch_exchange_rate(start_date=None, end_date=None, item_code="0000001"):
     :return: API 응답 데이터 (JSON)
     """
 
-    if not start_date:
-        start_date = get_first_day_of_last_month()
-    if not end_date:
-        end_date = get_last_day_of_last_month()
-
     params = APIParams(
         service_name="StatisticSearch",
         table_code="731Y001",
         start_date=start_date,
         end_date=end_date,
-        item_code=item_code,
+        item_code=item_code or "0000001",
     )
-
-    logger.info(params);
 
     url = generate_statistic_url(params)
     return fetch_data(url)

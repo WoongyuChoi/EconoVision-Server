@@ -3,8 +3,13 @@ import os
 from dotenv import load_dotenv
 
 from handler.logger import get_logger
-from util.date_utils import get_first_day_of_last_month, get_last_day_of_last_month
-from util.fetch_utils import fetch_data
+from models import APIParams
+from utils import (
+    fetch_data,
+    generate_statistic_url,
+    get_first_day_of_last_month,
+    get_last_day_of_last_month,
+)
 
 logger = get_logger(__name__)
 
@@ -13,10 +18,8 @@ if os.getenv("VERCEL_ENV") is None:
 
 
 def check_ecos():
-    url = "https://ecos.bok.or.kr/api/"
-
     try:
-        response = fetch_data(url, return_json=False)
+        response = fetch_data("https://ecos.bok.or.kr/api/", return_json=False)
         logger.info(f"Response: {response.status_code} {dict(response.headers)} ")
         return response.status_code == 200
     except ValueError as e:
@@ -38,15 +41,15 @@ def fetch_exchange_rate(start_date=None, end_date=None, item_code="0000001"):
     if not end_date:
         end_date = get_last_day_of_last_month()
 
-    base_url = "https://ecos.bok.or.kr/api"
-    service_name = "StatisticSearch"
-    api_key = os.getenv("ECOS_API_KEY")
-    response_format = "json"
-    language = "kr"
-    start_count = 1
-    end_count = 10000
-    table_code = "731Y001"
-    period = "D"
+    params = APIParams(
+        service_name="StatisticSearch",
+        table_code="731Y001",
+        start_date=start_date,
+        end_date=end_date,
+        item_code=item_code,
+    )
 
-    url = f"{base_url}/{service_name}/{api_key}/{response_format}/{language}/{start_count}/{end_count}/{table_code}/{period}/{start_date}/{end_date}/{item_code}"
+    logger.info(params);
+
+    url = generate_statistic_url(params)
     return fetch_data(url)

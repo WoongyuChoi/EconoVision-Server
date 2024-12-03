@@ -19,7 +19,7 @@ register_exception_handlers(app)
 
 @app.route("/")
 def health_check():
-    app.logger.info("Health check called.")
+    logger.info("Health check called.")
     status = {
         "status": "UP",
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -30,7 +30,7 @@ def health_check():
 
 @app.route("/favicon.<ext>")
 def favicon(ext):
-    app.logger.debug(f"Favicon request received with extension: {ext}")
+    logger.debug(f"Favicon request received with extension: {ext}")
     return "", 204, {"Content-Type": "image/x-icon"}
 
 
@@ -44,7 +44,7 @@ def get_exchange_rate():
     data = fetch_exchange_rate(
         start_date=start_date, end_date=end_date, item_code=item_code
     )
-    app.logger.info("Exchange rate data fetched successfully.")
+    logger.info("Exchange rate data fetched successfully.")
     return jsonify(data), 200
 
 

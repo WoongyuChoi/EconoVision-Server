@@ -1,10 +1,11 @@
 import time
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_caching import Cache
 
 from api import ExternalAPI
 from config import Config
+from decorators import json_utf8_response
 from handler.exception_handler import register_exception_handlers
 from handler.logger import get_logger
 from utils import get_request_params
@@ -20,7 +21,6 @@ register_exception_handlers(app)
 
 @app.route("/")
 def health_check():
-    logger.info("Health check called.")
     status = {
         "status": "UP",
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -36,6 +36,7 @@ def favicon(ext):
 
 
 @app.route("/api/exchange-rate", methods=["GET"])
+@json_utf8_response
 @cache.cached(query_string=True)
 def get_exchange_rate():
     params = get_request_params("start_date", "end_date", "item_code")
@@ -45,8 +46,20 @@ def get_exchange_rate():
         end_date=params["end_date"],
         item_code=params["item_code"],
     )
-    logger.info("Exchange rate data fetched successfully.")
-    return jsonify(data), 200
+    return data, 200
+
+
+@app.route("/api/foreign-reserves", methods=["GET"])
+@cache.cached(query_string=True)
+@json_utf8_response
+def get_foreign_reserves():
+    params = get_request_params("start_month", "end_month")
+
+    data = ExternalAPI.fetch_foreign_reserves(
+        start_month=params["start_month"],
+        end_month=params["end_month"],
+    )
+    return data, 200
 
 
 def handler(event, context):

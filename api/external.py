@@ -48,4 +48,25 @@ class ExternalAPI:
         url = generate_statistic_url(params)
         response_data = fetch_data(url)
 
-        return DataProcessor.process_exchange_rate_data(response_data)
+        return DataProcessor.process_statistic_data(response_data)
+
+    @staticmethod
+    @default_params
+    def fetch_foreign_reserves(start_month, end_month):
+        """
+        외부 API를 호출하여 외환보유액 데이터를 조회합니다.
+        """
+
+        params = APIParams(
+            service_name="StatisticSearch",
+            table_code="732Y001",
+            period="M",
+            start_date=start_month,
+            end_date=end_month,
+            item_code="99",
+        )
+
+        url = generate_statistic_url(params)
+        response_data = fetch_data(url)
+
+        return DataProcessor.process_statistic_data(response_data)

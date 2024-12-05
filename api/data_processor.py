@@ -9,7 +9,7 @@ class DataProcessor:
     """
 
     @staticmethod
-    def process_exchange_rate_data(response_data):
+    def process_statistic_data(response_data):
         if "StatisticSearch" not in response_data:
             logger.error(f"ValueError: {str(response_data)}")
 
@@ -27,8 +27,8 @@ class DataProcessor:
             processed_data.append(
                 {
                     "value": value,
-                    "item_code": row.get("ITEM_CODE1"),
-                    "item_name": row.get("ITEM_NAME1"),
+                    "itemCode": row.get("ITEM_CODE1"),
+                    "itemName": row.get("ITEM_NAME1"),
                     "time": row.get("TIME"),
                     "unit": (
                         row.get("UNIT_NAME").strip() if row.get("UNIT_NAME") else None

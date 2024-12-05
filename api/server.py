@@ -21,7 +21,6 @@ register_exception_handlers(app)
 
 @app.route("/")
 def health_check():
-    logger.info("Health check called.")
     status = {
         "status": "UP",
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -47,7 +46,19 @@ def get_exchange_rate():
         end_date=params["end_date"],
         item_code=params["item_code"],
     )
-    logger.info("Exchange rate data fetched successfully.")
+    return data, 200
+
+
+@app.route("/api/foreign-reserves", methods=["GET"])
+@cache.cached(query_string=True)
+@json_utf8_response
+def get_foreign_reserves():
+    params = get_request_params("start_month", "end_month")
+
+    data = ExternalAPI.fetch_foreign_reserves(
+        start_month=params["start_month"],
+        end_month=params["end_month"],
+    )
     return data, 200
 
 

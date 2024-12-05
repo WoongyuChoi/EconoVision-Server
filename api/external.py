@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
+from api.data_processor import DataProcessor
 from decorators import default_params
 from handler.logger import get_logger
 from models import APIParams
@@ -45,4 +46,6 @@ class ExternalAPI:
         )
 
         url = generate_statistic_url(params)
-        return fetch_data(url)
+        response_data = fetch_data(url)
+
+        return DataProcessor.process_exchange_rate_data(response_data)

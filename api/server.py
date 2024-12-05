@@ -7,6 +7,7 @@ from api import ExternalAPI
 from config import Config
 from handler.exception_handler import register_exception_handlers
 from handler.logger import get_logger
+from utils import get_request_params
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -37,12 +38,12 @@ def favicon(ext):
 @app.route("/api/exchange-rate", methods=["GET"])
 @cache.cached(query_string=True)
 def get_exchange_rate():
-    start_date = request.args.get("start_date")
-    end_date = request.args.get("end_date")
-    item_code = request.args.get("item_code")
+    params = get_request_params("start_date", "end_date", "item_code")
 
     data = ExternalAPI.fetch_exchange_rate(
-        start_date=start_date, end_date=end_date, item_code=item_code
+        start_date=params["start_date"],
+        end_date=params["end_date"],
+        item_code=params["item_code"],
     )
     logger.info("Exchange rate data fetched successfully.")
     return jsonify(data), 200

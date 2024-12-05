@@ -3,7 +3,7 @@ import time
 from flask import Flask, jsonify, request
 from flask_caching import Cache
 
-from api import check_ecos, fetch_exchange_rate
+from api import ExternalAPI
 from config import Config
 from handler.exception_handler import register_exception_handlers
 from handler.logger import get_logger
@@ -23,7 +23,7 @@ def health_check():
     status = {
         "status": "UP",
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "details": {"ecos_api": "UP" if check_ecos() else "DOWN"},
+        "details": {"ecos_api": "UP" if ExternalAPI.check_ecos() else "DOWN"},
     }
     return jsonify(status), 200
 
@@ -41,7 +41,7 @@ def get_exchange_rate():
     end_date = request.args.get("end_date")
     item_code = request.args.get("item_code")
 
-    data = fetch_exchange_rate(
+    data = ExternalAPI.fetch_exchange_rate(
         start_date=start_date, end_date=end_date, item_code=item_code
     )
     logger.info("Exchange rate data fetched successfully.")
